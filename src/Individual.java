@@ -37,8 +37,15 @@ public abstract class Individual implements Comparable<Individual> {
 
 	@Override
 	public int compareTo(Individual other) {
-		return Integer.compare(resource, other.resource);
+		return Integer.compare(other.resource, resource);
 	}
 	
+	public int getUid() {
+		return uid;
+	}
 	
+	@Override
+	public String toString() {
+		return String.format("Individual %d=%d", uid, resource);
+	}
 }

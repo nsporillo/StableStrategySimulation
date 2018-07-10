@@ -11,20 +11,20 @@ public class project02 {
 		} else  {
 			Integer popSize = parseParameter(args[0], "popSize");
 			Integer percentHawks;
-			Integer resouceAmt;
+			Integer resourceAmt;
 			Integer costHawkHawk;
 			
 			if (args.length == 1) {
 				percentHawks = PERCENT_HAWKS;
-				resouceAmt = RESOURCE_AMT;
+				resourceAmt = RESOURCE_AMT;
 				costHawkHawk = COST_HAWK_HAWK;
 			} else {
 				percentHawks = parseParameter(args[1], "[percentHawks]");
-				resouceAmt = parseParameter(args[2], "[resourceAmt]");
+				resourceAmt = parseParameter(args[2], "[resourceAmt]");
 				costHawkHawk = parseParameter(args[3], "[costHawk-Hawk]");
 			}
 			
-			
+			new Simulation(popSize, percentHawks, resourceAmt, costHawkHawk).showMenu();
 		}
 	}
 	

@@ -7,16 +7,16 @@ public class Dove extends Individual {
 
 	@Override
 	String compete(Individual indiv, int resource) {
+		int payoff = (int) Math.floor(resource / 2);
 		if (indiv instanceof Dove) {
 			// Split the resource
-			int payoff = (int) Math.floor(resource / 2);
 			indiv.addResource(payoff);
 			super.addResource(payoff);
 		} else if (indiv instanceof Hawk) {
 			return null;
 		}
 		
-		return String.format("%s/%2$s: %1$s: + %d\t%2$s: +%d", getType(), indiv.getType(), getResource(), indiv.getResource());
+		return String.format("%1$s/%2$s: %1$s: +%3$d\t%2$s: +%4$d", getType(), indiv.getType(), payoff, payoff);
 	}
 
 	@Override

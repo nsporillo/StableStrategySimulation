@@ -6,31 +6,28 @@ import java.util.Scanner;
 public class Simulation {
 
 	List<Individual> population;
-	int encounter;
-	int popSize;
-	int percentHawks;
-	int numHawks;
-	int resourceAmt;
-	int costHawkHawk;
-
 	Scanner scanner;
+	boolean step;
+	int encounter, popSize, percentHawks, numHawks, resourceAmt, costHawkHawk;
 
 	public Simulation(Integer popSize, Integer percentHawks, Integer resourceAmt, Integer costHawkHawk) {
 		this.encounter = 0;
+		this.popSize = popSize;
 		this.population = new ArrayList<Individual>(popSize);
 		double ratio = ((double) percentHawks / 100.0);
 		this.numHawks = (int) ((double) popSize * ratio);
-		
+
+		int index = 0;
 		for (int i = 0; i < popSize - numHawks; i++) {
-			population.add(new Dove(i));
+			population.add(new Dove(index++));
 		}
-		
+
 		for (int i = popSize - numHawks; i < popSize; i++) {
-			population.add(new Hawk(i, costHawkHawk));
+			population.add(new Hawk(index++, costHawkHawk));
 		}
-		
+
 		Collections.shuffle(population);
-		
+
 		this.percentHawks = percentHawks;
 		this.resourceAmt = resourceAmt;
 		this.costHawkHawk = costHawkHawk;
@@ -47,6 +44,7 @@ public class Simulation {
 		System.out.println("7 ) Step through interactions \"Stop\" to return to menu");
 		System.out.println("8 ) Quit");
 		System.out.println("================================");
+		waitForInput();
 	}
 
 	public void waitForInput() {
@@ -68,19 +66,36 @@ public class Simulation {
 			displaySorted();
 			break;
 		case 4:
+			for (int i = 0; i < 1000; i++) {
+				if (!stepSimulation()) {
+					break;
+				}
+			}
 			break;
 		case 5:
+			for (int i = 0; i < 10000; i++) {
+				if (!stepSimulation()) {
+					break;
+				}
+			}
 			break;
 		case 6:
+			int N = scanner.nextInt();
+			for (int i = 0; i < N; i++) {
+				if (!stepSimulation()) {
+					break;
+				}
+			}
 			break;
 		case 7:
+			step = true;
 			break;
 		case 8:
 			System.exit(0);
 			return;
 		}
-		
-		waitForInput();
+
+		showMenu();
 	}
 
 	public void displayStartingStats() {
@@ -94,13 +109,13 @@ public class Simulation {
 		System.out.println("Each resource is worth: " + resourceAmt);
 		System.out.println("Cost of Hawk-Hawk interaction: " + costHawkHawk);
 	}
-	
+
 	public void displayScores() {
 		int alive = 0;
-		
+
 		for (int i = 0; i < population.size(); i++) {
 			Individual indiv = population.get(i);
-			
+
 			if (!indiv.isDead()) {
 				alive++;
 				System.out.println(String.format("Individual[%d]=%s:%d", i, indiv.getType(), indiv.getResource()));
@@ -108,48 +123,69 @@ public class Simulation {
 				System.out.println(String.format("Individual[%d]=DEAD:%d", i, indiv.getResource()));
 			}
 		}
-		
+
 		System.out.println("Living: " + alive);
 	}
-	
+
 	public void displaySorted() {
 		List<Individual> copy = new ArrayList<>();
 		copy.addAll(population);
 		Collections.sort(copy);
-		
+
 		for (Individual indiv : copy) {
 			System.out.println(indiv.getType() + ":" + indiv.getResource());
 		}
 	}
-	
+
 	public Individual getNext(int index) {
 		Individual indiv = population.get(index);
-		
-		while(indiv.isDead()) {
+
+		while (indiv.isDead()) {
 			indiv = population.get(++index);
 		}
-		
-		System.out.println("Individual " + index + ": " + indiv.getType());
-		
+
 		return indiv;
 	}
-	
-	public void stepSimulation() {
-		System.out.println("Encounter: " + ++encounter);
+
+	public boolean stepSimulation() {
+		if (step) {
+			String next = scanner.nextLine();
+			if (next.contains("Stop")) {
+				return false;
+			} else {
+				// Do nothing..?
+			}
+		}
 		
+		System.out.println("Encounter: " + ++encounter);
+
 		int index = 0;
 		Collections.shuffle(population);
 		Individual one = getNext(index);
 		Individual two = getNext(++index);
-		
-		while (one == two) {
+
+		while (one == two || (one.getType().equals("Dove") && two.getType().equals("Hawk"))) {
 			two = getNext(++index);
 		}
-		
+
+		System.out.println("Individual " + one.getUid() + ": " + one.getType());
+		System.out.println("Individual " + two.getUid() + ": " + two.getType());
+
 		if (one.getType().equals("Hawk")) {
-			one.compete(two, resourceAmt);
-		} else {
-			two.compete(one, resourceAmt);
+			System.out.println(one.compete(two, resourceAmt));
+		} else if (!two.getType().equals("Hawk")) {
+			System.out.println(two.compete(one, resourceAmt));
 		}
+
+		if (one.isDead()) {
+			System.out.println(one.getType() + " one has died!");
+		}
+
+		if (two.isDead()) {
+			System.out.println(two.getType() + " two has died!");
+		}
+
+		System.out.println(one.toString() + "\t\t" + two.toString());
+		return true;
 	}
 }

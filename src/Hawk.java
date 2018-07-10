@@ -12,11 +12,15 @@ public class Hawk extends Individual {
 	String compete(Individual indiv, int resource) {
 		if (indiv instanceof Dove) {
 			super.addResource(resource);
+			return String.format("%1$s/%2$s: %1$s: +%3$d\t%2$s: +%4$d", getType(), indiv.getType(), resource, 0);
 		} else if (indiv instanceof Hawk) {
-			super.addResource(-penalty);
+			int net = resource - penalty;
+			super.addResource(net);
+			indiv.addResource(-penalty);
+			return String.format("%1$s/%2$s: %1$s: %3$d\t%2$s: %4$d", getType(), indiv.getType(), net, -penalty);
 		}
 		
-		return String.format("%s/%2$s: %1$s: + %d\t%2$s: +%d", getType(), indiv.getType(), getResource(), indiv.getResource());
+		return null;
 	}
 	
 	@Override
