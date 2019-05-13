@@ -1,0 +1,3 @@
+#!/bin/bash
+javac *.java
+java project02 $1 $2 $3 $4

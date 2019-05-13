@@ -18,14 +18,17 @@ public class Simulation {
 		this.numHawks = (int) ((double) popSize * ratio);
 
 		int index = 0;
+		// Add the doves
 		for (int i = 0; i < popSize - numHawks; i++) {
 			population.add(new Dove(index++));
 		}
 
+		// Add the hawks
 		for (int i = popSize - numHawks; i < popSize; i++) {
 			population.add(new Hawk(index++, costHawkHawk));
 		}
 
+		// Randomize the collection
 		Collections.shuffle(population);
 
 		this.percentHawks = percentHawks;
@@ -137,6 +140,12 @@ public class Simulation {
 		}
 	}
 
+	/**
+	 * Gets next individual that isnt dead
+	 * 
+	 * @param index
+	 * @return
+	 */
 	public Individual getNext(int index) {
 		Individual indiv = population.get(index);
 
@@ -147,6 +156,11 @@ public class Simulation {
 		return indiv;
 	}
 
+	/**
+	 * Executes one encounter in the simulation
+	 * 
+	 * @return
+	 */
 	public boolean stepSimulation() {
 		if (step) {
 			String next = scanner.nextLine();
@@ -156,7 +170,7 @@ public class Simulation {
 				// Do nothing..?
 			}
 		}
-		
+
 		System.out.println("Encounter: " + ++encounter);
 
 		int index = 0;
